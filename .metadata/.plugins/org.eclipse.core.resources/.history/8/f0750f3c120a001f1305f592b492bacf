@@ -1,0 +1,92 @@
+package net.codejava;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import org.apache.poi.ss.usermodel.*;
+
+public class SQL {
+
+	public static void main(String[] args) {
+		String jdbcUrl = "jdbc:sqlite:/D:\\PROGS\\SQLite\\sqlite-tools-win-x64-3450300\\supplies.db";
+
+		try {
+			Connection connection = DriverManager.getConnection(jdbcUrl);
+			String exelfilePath = "D:\\BSUIR\\4 курс\\Диплом\\4 глава\\база товаров.xlsx";
+			 FileInputStream inputStream = new FileInputStream(excelFilePath);
+
+	            Workbook workbook = WorkbookFactory.create(inputStream);
+	            Sheet sheet = workbook.getSheetAt(0);
+
+	            String sql = "INSERT INTO supplies (name, brand, description, price, date, country, manufacturer, seller, purpose) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	            PreparedStatement statement = connection.prepareStatement(sql);
+
+	            for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+	                Row row = sheet.getRow(i);
+	                if (row != null) {
+	                    String name = row.getCell(0).getStringCellValue();
+	                    String brand = row.getCell(1).getStringCellValue();
+	                    String description = row.getCell(2).getStringCellValue();
+	                    String price = row.getCell(3).getStringCellValue();
+	                    String date = row.getCell(4).getStringCellValue();
+	                    String country = row.getCell(5).getStringCellValue();
+	                    String manufacturer = row.getCell(6).getStringCellValue();
+	                    String seller = row.getCell(7).getStringCellValue();
+	                    String purpose = row.getCell(8).getStringCellValue();
+
+	                    statement.setString(1, name);
+	                    statement.setString(2, brand);
+	                    statement.setString(3, description);
+	                    statement.setString(4, price);
+	                    statement.setString(5, date);
+	                    statement.setString(6, country);
+	                    statement.setString(7, manufacturer);
+	                    statement.setString(8, seller);
+	                    statement.setString(9, purpose);
+
+	                    statement.addBatch();
+	                }
+	            }
+
+	            statement.executeBatch();
+	            workbook.close();
+	            inputStream.close();
+
+	        } catch (SQLException | IOException | InvalidFormatException e) {
+	            e.printStackTrace();
+	        }
+	    }
+	}
+//			String sql = "SELECT rowid, * FROM supplies";
+//			
+//			Statement statement = connection.createStatement();
+//			
+//			ResultSet result = statement.executeQuery(sql);
+//			
+//			while (result.next()) {
+//				Integer id = result.getInt("rowid");
+//				String name = result.getString("name");
+//				String brand = result.getString("brand");
+//				String description = result.getString("description");
+//				String price = result.getString("price");
+//				String date = result.getString("date");
+//				String country = result.getString("country");
+//				String manufacturer = result.getString("manufacturer");
+//				String seller = result.getString("seller");
+//				String purpose = result.getString("purpose");
+//				
+//				System.out.println(id + "|" + name + "|" + brand + "|" + description + "|" + price + "|" + date + "|" + country + "|" + manufacturer + "|" + seller + "|" + purpose);
+//			}
+//			
+//		} catch (SQLException e) {
+//			System.out.println("Error connecting to SQLite database");
+//			e.printStackTrace();
+//		}
+//	}
+//
+//}

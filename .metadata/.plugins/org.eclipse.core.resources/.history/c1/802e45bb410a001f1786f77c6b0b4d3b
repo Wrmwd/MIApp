@@ -1,0 +1,44 @@
+package application;
+
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.ResourceBundle;
+
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+
+public class LoginController implements Initializable{
+	public LoginModel loginModel = new LoginModel();
+	
+	@FXML
+	private Label isConnected;
+	@FXML
+	private TextField txtUserName;
+	@FXML
+	private TextField txtPassword;
+	
+	@Override
+	public void initialize(URL arg0, ResourceBundle arg1) {
+		
+		if(loginModel.isDBConnected()) {
+			isConnected.setText("Connected");
+		} else {
+			isConnected.setText("Not Connected");
+		}
+	}
+	
+	public void Login (ActionEvent event) {
+		try {
+		if(loginModel.isLogin(txtUserName.getText(), txtPassword.getText())) {
+			isConnected.setText("Имя и пароль верные");
+		}else {
+			isConnected.setText("Имя и пароль неверные");
+		}
+	}catch (SQLException e) {
+		e.printStackTrace();
+	}
+}
+}
